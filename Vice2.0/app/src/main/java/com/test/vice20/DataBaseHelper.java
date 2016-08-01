@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
+import com.test.vice20.Models.Item;
+
+import java.util.List;
+
 /**
  * Created by nolbertoarroyo on 8/1/16.
  */
@@ -33,7 +37,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES_SHOES);
+        db.execSQL(SQL_CREATE_ENTRIES_FAVORITES);
     }
 
     @Override
@@ -49,7 +53,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         public static final String COL_TITLE = "TITLE";
         public static final String COL_PREVIEW = "PREVIEW";
         public static final String COL_ITEM_ID = "ITEM_ID";
-        public static final String COL_TAGS = "TAGS";
         public static final String COL_ID = "_id";
         public static final String COL_PUBDATE = "PUBDATE";
         public static final String COL_BODY = "BODY";
@@ -58,13 +61,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
     //Create Favorites table
-    private static final String SQL_CREATE_ENTRIES_SHOES = "CREATE TABLE " +
+    private static final String SQL_CREATE_ENTRIES_FAVORITES = "CREATE TABLE " +
             DataEntryFavorites.TABLE_NAME + " (" +
-            DataEntryFavorites.COL_ID + " INTEGER PRIMARY KEY," +
+            DataEntryFavorites.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             DataEntryFavorites.COL_TITLE + " TEXT," +
             DataEntryFavorites.COL_PREVIEW + " TEXT," +
-            DataEntryFavorites.COL_PUBDATE + " DOUBLE," +
-            DataEntryFavorites.COL_TAGS + " TEXT," +
+            DataEntryFavorites.COL_PUBDATE + " TEXT," +
             DataEntryFavorites.COL_BODY + " TEXT," +
             DataEntryFavorites.COL_AUTHOR + " TEXT," +
             DataEntryFavorites.COL_ITEM_ID + " INTEGER," +
@@ -73,7 +75,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES_ARTICLES = "DROP TABLE IF EXISTS " +
             DataEntryFavorites.TABLE_NAME;
 
-    public static final String[] FAVORITES_COLUMNS = {DataEntryFavorites._ID,DataEntryFavorites.COL_ITEM_ID,DataEntryFavorites.COL_TITLE,DataEntryFavorites.COL_PREVIEW,DataEntryFavorites.COL_TAGS, DataEntryFavorites.COL_BODY,DataEntryFavorites.COL_AUTHOR,DataEntryFavorites.COL_PUBDATE,DataEntryFavorites.COL_DEFAULT_IMAGE};
+    public static final String[] FAVORITES_COLUMNS = {DataEntryFavorites._ID,DataEntryFavorites.COL_ITEM_ID,DataEntryFavorites.COL_TITLE,DataEntryFavorites.COL_PREVIEW, DataEntryFavorites.COL_BODY,DataEntryFavorites.COL_AUTHOR,DataEntryFavorites.COL_PUBDATE,DataEntryFavorites.COL_DEFAULT_IMAGE};
 
 
     public void insertRowArticles(Item item){
@@ -85,7 +87,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(DataEntryFavorites.COL_AUTHOR, item.getAuthor());
         values.put(DataEntryFavorites.COL_BODY, item.getBody());
         values.put(DataEntryFavorites.COL_PREVIEW,item.getPreview());
-        values.put(DataEntryFavorites.COL_TAGS, item.getTags());
         values.put(DataEntryFavorites.COL_PUBDATE, item.getPubDate());
         database.insertOrThrow(DataEntryFavorites.TABLE_NAME,null,values);
     }
@@ -106,7 +107,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public int deleteItem(long id) {
+    public int deleteFavoritesItem(long id) {
         SQLiteDatabase db = getWritableDatabase();
         int deleteNum = db.delete(DataEntryFavorites.TABLE_NAME,
                 DataEntryFavorites.COL_ID + " = ?",
