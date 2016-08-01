@@ -75,10 +75,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES_ARTICLES = "DROP TABLE IF EXISTS " +
             DataEntryFavorites.TABLE_NAME;
 
+    //creating favorites columns
     public static final String[] FAVORITES_COLUMNS = {DataEntryFavorites._ID,DataEntryFavorites.COL_ITEM_ID,DataEntryFavorites.COL_TITLE,DataEntryFavorites.COL_PREVIEW, DataEntryFavorites.COL_BODY,DataEntryFavorites.COL_AUTHOR,DataEntryFavorites.COL_PUBDATE,DataEntryFavorites.COL_DEFAULT_IMAGE};
 
-
-    public void insertRowArticles(Item item){
+    // method for inserting Articles properties into favorites table
+    public void insertRowFavorities(Item item){
 
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -106,8 +107,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 null); // h. limit
         return cursor;
     }
-
-    public int deleteFavoritesItem(long id) {
+    //deleting article from favorites table by id
+    public int deleteFavoritesItem(int id) {
         SQLiteDatabase db = getWritableDatabase();
         int deleteNum = db.delete(DataEntryFavorites.TABLE_NAME,
                 DataEntryFavorites.COL_ID + " = ?",
@@ -115,8 +116,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
         return deleteNum;
     }
-
-    public Cursor getArticleById(long id) {
+    //get article by id
+    public Cursor getArticleById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DataEntryFavorites.TABLE_NAME, // a. table
                 FAVORITES_COLUMNS, // b. column names
@@ -129,7 +130,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
-
+    //getting article by author
     public Cursor getArticleByAuthor(String author){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DataEntryFavorites.TABLE_NAME,
