@@ -49,7 +49,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     //Using baseColumns to create final properties
     public static abstract class DataEntryFavorites implements BaseColumns {
-        public static final String TABLE_NAME = "SHOPPING";
+        public static final String TABLE_NAME = "Favorites";
         public static final String COL_TITLE = "TITLE";
         public static final String COL_PREVIEW = "PREVIEW";
         public static final String COL_ITEM_ID = "ITEM_ID";
