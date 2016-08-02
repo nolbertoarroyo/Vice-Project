@@ -37,13 +37,18 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
     private ItemClickedInterface itemClickedInterface;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            itemClickedInterface = (ItemClickedInterface) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement interface  ");
+        }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         if (query == null) {
             //default today news
@@ -53,7 +58,11 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
             getData(false, query);
             query = null;
         }
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         customAdapter = new MyCustomAdapter(results, getActivity());
         setListAdapter(customAdapter);
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -107,7 +116,6 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
                     }
                 });
             }
-
 
         } else {
             Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
