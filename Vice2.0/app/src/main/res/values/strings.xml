@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Vice 2.0</string>
+    <string name="action_share">Share</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_favorite">Favorite</string>
+    <string name="action_search">Search</string>
 </resources>
