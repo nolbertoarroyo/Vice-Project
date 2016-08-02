@@ -49,7 +49,11 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (query == null) {
             //default today news
             getData(true, null);
@@ -58,11 +62,6 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
             getData(false, query);
             query = null;
         }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         customAdapter = new MyCustomAdapter(results, getActivity());
         setListAdapter(customAdapter);
         return super.onCreateView(inflater, container, savedInstanceState);
