@@ -24,6 +24,6 @@ public interface NewsServiceInterface {
     Call<Data> getLatestList(@Path("category") String category, @Path("page") int page);
 
     @GET("/api/article/{id}")
-    Call<Item> getArticle(@Path("id") String id);
+    Call<Item> getArticle(@Path("id") int id);
 
 }

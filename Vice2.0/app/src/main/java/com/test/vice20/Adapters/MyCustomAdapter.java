@@ -1,4 +1,4 @@
-package com.test.vice20;
+package com.test.vice20.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.test.vice20.Models.Item;
+import com.test.vice20.R;
 
 import java.util.List;
 
