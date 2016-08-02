@@ -15,7 +15,7 @@ import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Models.Data;
 import com.test.vice20.Models.Item;
-import com.test.vice20.MyCustomAdapter;
+import com.test.vice20.Adapters.MyCustomAdapter;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 
 import java.util.List;

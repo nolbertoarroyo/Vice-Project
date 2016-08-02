@@ -12,17 +12,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.test.vice20.Activities.MainActivity;
-import com.test.vice20.CustomRecyclerViewAdapter;
+import com.test.vice20.Adapters.CustomRecyclerViewAdapter;
 import com.test.vice20.DataBaseHelper;
-import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
-import com.test.vice20.Models.Data;
 import com.test.vice20.Models.Item;
-import com.test.vice20.MyCustomAdapter;
 import com.test.vice20.R;
 
 import java.util.ArrayList;
