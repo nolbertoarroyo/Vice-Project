@@ -22,8 +22,6 @@ public class MyCustomAdapter extends BaseAdapter {
     private Context context;
     private ViewHolder viewHolder;
 
-    private NewsServiceInterface newsServiceInterface;
-
     public MyCustomAdapter(List<Item> data, Context context) {
         this.data = data;
         this.context = context;

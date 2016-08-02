@@ -17,11 +17,11 @@ public interface NewsServiceInterface {
 
     @GET("/api/getmostpopular/{category}/{page}")
         // Categories: news, music, sports, tech, travel, fashion, guide, nsfw, photo, comics, stuff, film, festivals, gallery, noisey, thecreatorsproject, fightland, motherboard, food, interviews, culture, column
-    Call<Data> getPopularList(@Path("category") String category, @Path("page") String page);
+    Call<Data> getPopularList(@Path("category") String category, @Path("page") int page);
 
     @GET("/api/getlatest/category/{category}/{page}")
         // news, music, sports, tech, travel, fashion, guide, nsfw, photo, comics, stuff, film, festivals, gallery, noisey, thecreatorsproject, fightland, motherboard, food, interviews, culture, column
-    Call<Data> getLatestList(@Path("category") String category, @Path("page") String page);
+    Call<Data> getLatestList(@Path("category") String category, @Path("page") int page);
 
     @GET("/api/article/{id}")
     Call<Item> getArticle(@Path("id") String id);
