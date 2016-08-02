@@ -26,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DetailsFragment extends Fragment {
     NewsServiceInterface newsServiceInterface;
     Item currentItem;
-    private String id;
+    private int id;
     private ImageView articleImage;
     private TextView titleText, authorText, contentText, categoryText, pubDateText;
 
@@ -62,7 +62,7 @@ public class DetailsFragment extends Fragment {
 
     }
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
-    public void getItem(String id) {
+    public void getItem(int id) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.baseURL)
@@ -85,7 +85,7 @@ public class DetailsFragment extends Fragment {
         });
     }
     // setter method to receive article position from listFragment
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
