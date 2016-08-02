@@ -33,4 +33,7 @@ dependencies {
 
     // Picasso
     compile 'com.squareup.picasso:picasso:2.5.0'
+
+    // Recycler View
+    compile 'com.android.support:recyclerview-v7:24.0.0'
 }

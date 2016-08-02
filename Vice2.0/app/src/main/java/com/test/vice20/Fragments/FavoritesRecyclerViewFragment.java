@@ -1,10 +1,13 @@
-package com.test.vice20;
+package com.test.vice20.Fragments;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +15,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.test.vice20.Activities.MainActivity;
+import com.test.vice20.CustomRecyclerViewAdapter;
+import com.test.vice20.DataBaseHelper;
+import com.test.vice20.Interfaces.ItemClickedInterface;
+import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Data;
 import com.test.vice20.Models.Item;
+import com.test.vice20.MyCustomAdapter;
+import com.test.vice20.R;
 
 import java.util.List;
 
@@ -24,46 +33,44 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by kitty on 8/1/16.
+ * Created by kitty on 8/2/16.
  */
-public class ArticleListFragment extends android.support.v4.app.ListFragment {
+public class FavoritesRecyclerViewFragment extends Fragment {
 
-    private List<Item> results;
-    private MyCustomAdapter customAdapter;
+    private static final String TAG = "RecyclerViewFragment";
 
-    private String query = null;
+    private List<Item> favorites;
+    private DataBaseHelper dataBaseHelper;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter rvAdapter;
+    private RecyclerView.LayoutManager rvLayoutManager;
 
     private NewsServiceInterface newsServiceInterface;
     private ItemClickedInterface itemClickedInterface;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            itemClickedInterface = (ItemClickedInterface) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() + " must implement interface  ");
-        }
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dataBaseHelper = DataBaseHelper.getInstance(getActivity());
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (query == null) {
-            //default today news
-            getData(true, null);
-        } else {
-            //get articles based on query
-            getData(false, query);
-            query = null;
-        }
-        customAdapter = new MyCustomAdapter(results, getActivity());
-        setListAdapter(customAdapter);
+
+        View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
+        rootView.setTag(TAG);
+
+        getData();
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        rvLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(rvLayoutManager);
+
+        rvAdapter = new CustomRecyclerViewAdapter(favorites);
+        recyclerView.setAdapter(rvAdapter);
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -75,7 +82,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
     }
 
     //get data depending on if query or default from VICE API
-    private void getData(boolean isDefault, String query) {
+    private void getData() {
 
         //check internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
