@@ -25,6 +25,7 @@ import com.test.vice20.Models.Item;
 import com.test.vice20.MyCustomAdapter;
 import com.test.vice20.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,7 +41,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
     private static final String TAG = "RecyclerViewFragment";
 
-    private List<Item> favorites;
+    private List<Item> favorites = new ArrayList<>();
     private DataBaseHelper dataBaseHelper;
 
     private RecyclerView recyclerView;
@@ -77,6 +78,8 @@ public class FavoritesRecyclerViewFragment extends Fragment {
     //get data depending on if query or default from VICE API
     private void getData() {
 
+        final Cursor cursor = dataBaseHelper.getFavoritesList();
+
         //check internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -89,25 +92,34 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
             newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-            Cursor cursor = dataBaseHelper.getFavoritesList();
-
-            cursor.moveToFirst();
 
             for (int i = 0; i<cursor.getCount(); i++) {
-                newsServiceInterface.getArticle(cursor.getInt(cursor.getColumnIndex())).enqueue(new Callback<Data>() {
+                cursor.moveToPosition(i);
+                newsServiceInterface.getArticle(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))).enqueue(new Callback<Item>() {
                     @Override
-                    public void onResponse(Call<Data> call, Response<Data> response) {
-
+                    public void onResponse(Call<Item> call, Response<Item> response) {
+                        favorites.add(response.body());
                     }
 
                     @Override
-                    public void onFailure(Call<Data> call, Throwable t) {
+                    public void onFailure(Call<Item> call, Throwable t) {
 
                     }
                 });
             }
         } else {
-            Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
+            for (int i = 0; i<cursor.getCount(); i++) {
+                cursor.moveToPosition(i);
+                Item temp = new Item();
+                temp.setAuthor(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_AUTHOR)));
+                temp.setTitle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_TITLE)));
+                temp.setPreview(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PREVIEW)));
+                temp.setPubDate(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PUBDATE)));
+                temp.setBody(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_BODY)));
+                temp.setId(Integer.toString(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))));
+                temp.setImage(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_DEFAULT_IMAGE)));
+                favorites.add(temp);
+            }
         }
     }
 
