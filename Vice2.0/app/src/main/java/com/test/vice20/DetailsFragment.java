@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Models.Item;
 
 import retrofit2.Call;
@@ -30,11 +31,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://vice.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
+
 
 
     }
@@ -64,6 +61,13 @@ public class DetailsFragment extends Fragment {
     }
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
     public void getItem(String id) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
+
         newsServiceInterface.getArticle(id).enqueue(new Callback<Item>() {
             @Override
             public void onResponse(Call<Item> call, Response<Item> response) {
