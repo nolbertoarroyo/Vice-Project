@@ -45,6 +45,8 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    // ToDo: need to update to swap to details fragment
                     Log.d(TAG, "Clicked on item: " + getLayoutPosition());
                 }
             });

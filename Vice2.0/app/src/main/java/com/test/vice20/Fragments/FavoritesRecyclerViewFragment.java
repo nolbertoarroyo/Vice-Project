@@ -1,6 +1,7 @@
 package com.test.vice20.Fragments;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -47,7 +48,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
     private RecyclerView.LayoutManager rvLayoutManager;
 
     private NewsServiceInterface newsServiceInterface;
-    private ItemClickedInterface itemClickedInterface;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,13 +74,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    //passing the article id of the position selected
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        String articleClicked = ((Item) l.getAdapter().getItem(position)).getId();
-        itemClickedInterface.onItemClicked(articleClicked);
-    }
-
     //get data depending on if query or default from VICE API
     private void getData() {
 
@@ -96,24 +89,15 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
             newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-            //if no query, populate with today's latest news
-            if (isDefault) {
-                newsServiceInterface.getTodayList(1).enqueue(new Callback<Data>() {
+            Cursor cursor = dataBaseHelper.getFavoritesList();
+
+            cursor.moveToFirst();
+
+            for (int i = 0; i<cursor.getCount(); i++) {
+                newsServiceInterface.getArticle(cursor.getInt(cursor.getColumnIndex())).enqueue(new Callback<Data>() {
                     @Override
                     public void onResponse(Call<Data> call, Response<Data> response) {
-                        results = response.body().getItems();
-                    }
 
-                    @Override
-                    public void onFailure(Call<Data> call, Throwable t) {
-
-                    }
-                });
-            } else { //if query entered populate with the category's latest news
-                newsServiceInterface.getLatestList(query, 1).enqueue(new Callback<Data>() {
-                    @Override
-                    public void onResponse(Call<Data> call, Response<Data> response) {
-                        results = response.body().getItems();
                     }
 
                     @Override
@@ -122,7 +106,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                     }
                 });
             }
-
         } else {
             Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
         }
