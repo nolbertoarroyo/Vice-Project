@@ -7,7 +7,7 @@ import com.test.vice20.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String baseURL = "http://vice.com";
+    public static String baseURL = "http://vice.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
