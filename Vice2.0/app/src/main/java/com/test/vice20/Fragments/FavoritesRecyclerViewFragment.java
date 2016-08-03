@@ -17,6 +17,8 @@ import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Adapters.CustomRecyclerViewAdapter;
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Interfaces.NewsServiceInterface;
+import com.test.vice20.Models.Article;
+import com.test.vice20.Models.ArticleNews;
 import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
@@ -36,7 +38,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
     private static final String TAG = "RecyclerViewFragment";
 
-    private List<Item> favorites = new ArrayList<>();
+    private List<Article> favorites = new ArrayList<>();
     private DataBaseHelper dataBaseHelper;
 
     private RecyclerView recyclerView;
@@ -90,14 +92,14 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
-                newsServiceInterface.getArticle(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))).enqueue(new Callback<Item>() {
+                newsServiceInterface.getArticle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))).enqueue(new Callback<ArticleNews>() {
                     @Override
-                    public void onResponse(Call<Item> call, Response<Item> response) {
-                        favorites.add(response.body());
+                    public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+                        favorites.add(response.body().getData().getArticle());
                     }
 
                     @Override
-                    public void onFailure(Call<Item> call, Throwable t) {
+                    public void onFailure(Call<ArticleNews> call, Throwable t) {
 
                     }
                 });
@@ -105,7 +107,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         } else {
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
-                Item temp = new Item();
+                Article temp = new Article();
                 temp.setAuthor(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_AUTHOR)));
                 temp.setTitle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_TITLE)));
                 temp.setPreview(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PREVIEW)));

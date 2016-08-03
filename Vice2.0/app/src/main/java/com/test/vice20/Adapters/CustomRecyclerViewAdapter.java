@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.test.vice20.Models.Article;
 import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.SampleViewHolder>{
     private static final String TAG = "Adapter";
-    private List<Item> data;
+    private List<Article> data;
 
 
     public static class SampleViewHolder extends RecyclerView.ViewHolder {
@@ -54,7 +55,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         }
     }
 
-    public CustomRecyclerViewAdapter(List<Item> inComingData){
+    public CustomRecyclerViewAdapter(List<Article> inComingData){
         this.data = inComingData;
     }
 
@@ -83,7 +84,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
     @Override
     public void onBindViewHolder(SampleViewHolder holder, int position) {
         // Get our data item for the current position from the data list
-        Item dataItem = data.get(position);
+        Article dataItem = data.get(position);
 
         /**
          * Pull out the inflated TextView/ImageView references out of our SampleViewHolder

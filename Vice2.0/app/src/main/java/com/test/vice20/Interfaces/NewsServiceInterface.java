@@ -1,5 +1,6 @@
 package com.test.vice20.Interfaces;
 
+import com.test.vice20.Models.ArticleNews;
 import com.test.vice20.Models.Data;
 import com.test.vice20.Models.Item;
 import com.test.vice20.Models.News;
@@ -25,6 +26,6 @@ public interface NewsServiceInterface {
         Call<News> getLatestList(@Path("category") String category, @Path("page") int page);
 
         @GET("/api/article/{id}")
-        Call<Item> getArticle(@Path("id") int id);
+        Call<ArticleNews> getArticle(@Path("id") String id);
 
 }

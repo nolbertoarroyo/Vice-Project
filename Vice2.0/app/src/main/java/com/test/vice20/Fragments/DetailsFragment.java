@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.test.vice20.Activities.MainActivity;
+import com.test.vice20.Models.Article;
+import com.test.vice20.Models.ArticleNews;
 import com.test.vice20.Models.Item;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.R;
@@ -25,8 +27,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class DetailsFragment extends Fragment {
     NewsServiceInterface newsServiceInterface;
-    Item currentItem;
-    private int id;
+    Article currentItem;
+    private String id;
     private ImageView articleImage;
     private TextView titleText, authorText, contentText, categoryText, pubDateText;
 
@@ -62,7 +64,7 @@ public class DetailsFragment extends Fragment {
 
     }
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
-    public void getItem(int id) {
+    public void getItem(String id) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.baseURL)
@@ -70,22 +72,22 @@ public class DetailsFragment extends Fragment {
                 .build();
         newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-        newsServiceInterface.getArticle(id).enqueue(new Callback<Item>() {
+        newsServiceInterface.getArticle(id).enqueue(new Callback<ArticleNews>() {
             @Override
-            public void onResponse(Call<Item> call, Response<Item> response) {
-                currentItem = response.body();
+            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+                currentItem = response.body().getData().getArticle();
                 populateViews();
             }
 
 
             @Override
-            public void onFailure(Call<Item> call, Throwable t) {
+            public void onFailure(Call<ArticleNews> call, Throwable t) {
 
             }
         });
     }
     // setter method to receive article position from listFragment
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
