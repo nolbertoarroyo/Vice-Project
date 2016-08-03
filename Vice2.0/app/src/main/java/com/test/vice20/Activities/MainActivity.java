@@ -1,5 +1,7 @@
 package com.test.vice20.Activities;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,9 +9,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.test.vice20.Fragments.ArticleListFragment;
+import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
 
     public static String baseURL = "http://vice.com";
 
@@ -18,9 +22,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // create a new fragment
+        ArticleListFragment fragment = new ArticleListFragment();
+
+        // add fragment to the container ( there is nothing there yet, that is why we add )
+        fragmentTransaction.add(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
+
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -49,7 +64,11 @@ public class MainActivity extends AppCompatActivity {
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
+    }
+
+    @Override
+    public void onItemClicked(String selectedArticleID) {
+
     }
 }

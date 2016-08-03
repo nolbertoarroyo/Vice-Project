@@ -57,6 +57,8 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        customAdapter = new MyCustomAdapter(getActivity());
+
         if (query == null) {
             //default today news
             getData(true, null);
@@ -65,7 +67,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
             getData(false, query);
             query = null;
         }
-        customAdapter = new MyCustomAdapter(results, getActivity());
+
         setListAdapter(customAdapter);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -98,6 +100,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
                     @Override
                     public void onResponse(Call<Data> call, Response<Data> response) {
                         results = response.body().getItems();
+                        customAdapter.setData(results);
                     }
 
                     @Override
@@ -110,6 +113,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
                     @Override
                     public void onResponse(Call<Data> call, Response<Data> response) {
                         results = response.body().getItems();
+                        customAdapter.setData(results);
                     }
 
                     @Override
