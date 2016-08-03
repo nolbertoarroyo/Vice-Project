@@ -26,13 +26,13 @@ public class Item {
     private String body;
     @SerializedName("feedText")
     @Expose
-    private Object feedText;
+    private String feedText;
     @SerializedName("seriesTitle")
     @Expose
     private String seriesTitle;
     @SerializedName("seriesDescription")
     @Expose
-    private String seriesDescription;
+    private Object seriesDescription;
     @SerializedName("id")
     @Expose
     private String id;
@@ -60,9 +60,9 @@ public class Item {
     @SerializedName("category")
     @Expose
     private String category;
-    @SerializedName("contributor")
-    @Expose
-    private Contributor contributor;
+//    @SerializedName("contributor")
+//    @Expose
+//    private Contributor contributor;
     @SerializedName("nsfw")
     @Expose
     private Boolean nsfw;
@@ -87,6 +87,9 @@ public class Item {
     @SerializedName("thumb_7_10")
     @Expose
     private String thumb710;
+    @SerializedName("media")
+    @Expose
+    private Media media;
 
     /**
      *
@@ -165,7 +168,7 @@ public class Item {
      * @return
      * The feedText
      */
-    public Object getFeedText() {
+    public String getFeedText() {
         return feedText;
     }
 
@@ -174,7 +177,7 @@ public class Item {
      * @param feedText
      * The feedText
      */
-    public void setFeedText(Object feedText) {
+    public void setFeedText(String feedText) {
         this.feedText = feedText;
     }
 
@@ -201,7 +204,7 @@ public class Item {
      * @return
      * The seriesDescription
      */
-    public String getSeriesDescription() {
+    public Object getSeriesDescription() {
         return seriesDescription;
     }
 
@@ -210,7 +213,7 @@ public class Item {
      * @param seriesDescription
      * The seriesDescription
      */
-    public void setSeriesDescription(String seriesDescription) {
+    public void setSeriesDescription(Object seriesDescription) {
         this.seriesDescription = seriesDescription;
     }
 
@@ -377,22 +380,22 @@ public class Item {
     }
 
     /**
-     *
-     * @return
-     * The contributor
-     */
-    public Contributor getContributor() {
-        return contributor;
-    }
-
-    /**
-     *
-     * @param contributor
-     * The contributor
-     */
-    public void setContributor(Contributor contributor) {
-        this.contributor = contributor;
-    }
+//     *
+//     * @return
+//     * The contributor
+//     */
+//    public Contributor getContributor() {
+//        return contributor;
+//    }
+//
+//    /**
+//     *
+//     * @param contributor
+//     * The contributor
+//     */
+//    public void setContributor(Contributor contributor) {
+//        this.contributor = contributor;
+//    }
 
     /**
      *
@@ -538,4 +541,21 @@ public class Item {
         this.thumb710 = thumb710;
     }
 
+    /**
+     *
+     * @return
+     * The media
+     */
+    public Media getMedia() {
+        return media;
+    }
+
+    /**
+     *
+     * @param media
+     * The media
+     */
+    public void setMedia(Media media) {
+        this.media = media;
+    }
 }
