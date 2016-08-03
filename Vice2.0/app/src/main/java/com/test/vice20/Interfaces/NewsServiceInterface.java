@@ -12,7 +12,7 @@ import retrofit2.http.Path;
  */
 public interface NewsServiceInterface {
 
-    @GET("//api/getvicetoday/{page}")
+    @GET("/api/getvicetoday/{page}")
     Call<Data> getTodayList(@Path("page") int page);
 
     @GET("/api/getmostpopular/{category}/{page}")

@@ -105,7 +105,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
 
                     @Override
                     public void onFailure(Call<Data> call, Throwable t) {
-
+                        Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else { //if query entered populate with the category's latest news
@@ -118,7 +118,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
 
                     @Override
                     public void onFailure(Call<Data> call, Throwable t) {
-
+                        Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
