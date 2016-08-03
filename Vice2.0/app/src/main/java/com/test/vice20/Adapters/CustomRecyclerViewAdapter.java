@@ -20,9 +20,9 @@ import java.util.List;
  * Created by kitty on 8/2/16.
  */
 public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.SampleViewHolder>{
+
     private static final String TAG = "Adapter";
     private List<Article> data;
-
 
     public static class SampleViewHolder extends RecyclerView.ViewHolder {
 

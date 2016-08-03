@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
     @Override
     public void onItemClicked(String selectedArticleID) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if(detailFragment == null ){
+        if(detailFragment == null){
             detailFragment = new DetailsFragment();
         }
         detailFragment.setId(selectedArticleID);

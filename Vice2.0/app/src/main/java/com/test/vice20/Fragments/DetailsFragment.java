@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.test.vice20.Activities.MainActivity;
@@ -82,7 +83,7 @@ public class DetailsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArticleNews> call, Throwable t) {
-
+                Toast.makeText(getActivity(), "Article API call failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

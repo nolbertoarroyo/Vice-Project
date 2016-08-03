@@ -59,9 +59,9 @@ public class Article {
     @SerializedName("category")
     @Expose
     private String category;
-    @SerializedName("contributor")
-    @Expose
-    private String contributor;
+//    @SerializedName("contributor")
+//    @Expose
+//    private String contributor;
     @SerializedName("nsfw")
     @Expose
     private Boolean nsfw;
@@ -381,23 +381,23 @@ public class Article {
         this.category = category;
     }
 
-    /**
-     *
-     * @return
-     * The contributor
-     */
-    public String getContributor() {
-        return contributor;
-    }
-
-    /**
-     *
-     * @param contributor
-     * The contributor
-     */
-    public void setContributor(String contributor) {
-        this.contributor = contributor;
-    }
+//    /**
+//     *
+//     * @return
+//     * The contributor
+//     */
+//    public String getContributor() {
+//        return contributor;
+//    }
+//
+//    /**
+//     *
+//     * @param contributor
+//     * The contributor
+//     */
+//    public void setContributor(String contributor) {
+//        this.contributor = contributor;
+//    }
 
     /**
      *
