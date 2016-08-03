@@ -96,7 +96,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
             newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
             //if no query, populate with today's latest news
-//            if (isDefault) {
+            if (isDefault) {
                 newsServiceInterface.getTodayList(0).enqueue(new Callback<News>() {
                     @Override
                     public void onResponse(Call<News> call, Response<News> response) {
@@ -109,20 +109,20 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
                         Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-//            } else { //if query entered populate with the category's latest news
-//                newsServiceInterface.getLatestList(query, 0).enqueue(new Callback<Data>() {
-//                    @Override
-//                    public void onResponse(Call<Data> call, Response<Data> response) {
-//                        results = response.body().getItems();
-//                        customAdapter.setData(results);
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<Data> call, Throwable t) {
-//                        Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            }
+            } else { //if query entered populate with the category's latest news
+                newsServiceInterface.getLatestList(query, 0).enqueue(new Callback<News>() {
+                    @Override
+                    public void onResponse(Call<News> call, Response<News> response) {
+                        results = response.body().data.getItems();
+                        customAdapter.setData(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<News> call, Throwable t) {
+                        Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
         } else {
             Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
