@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,8 +24,8 @@ public class MyCustomAdapter extends BaseAdapter {
     private Context context;
     private ViewHolder viewHolder;
 
-    public MyCustomAdapter(List<Item> data, Context context) {
-        this.data = data;
+    public MyCustomAdapter(Context context) {
+        this.data = Collections.EMPTY_LIST;
         this.context = context;
     }
 
@@ -75,5 +76,10 @@ public class MyCustomAdapter extends BaseAdapter {
             this.categoryTextView = (TextView) itemLayout.findViewById(R.id.list_item_category);
             this.previewTextView = (TextView) itemLayout.findViewById(R.id.list_item_preview);
         }
+    }
+
+    public void setData(List<Item> newData) {
+        this.data = newData;
+        this.notifyDataSetChanged();
     }
 }
