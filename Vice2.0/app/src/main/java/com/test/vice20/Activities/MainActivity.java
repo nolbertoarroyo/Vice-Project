@@ -10,12 +10,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.test.vice20.Fragments.ArticleListFragment;
+import com.test.vice20.Fragments.DetailsFragment;
 import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.R;
 
 public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
 
     public static String baseURL = "http://vice.com/";
+    private DetailsFragment detailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
         // add fragment to the container ( there is nothing there yet, that is why we add )
         fragmentTransaction.add(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -69,6 +72,14 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @Override
     public void onItemClicked(String selectedArticleID) {
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(detailFragment == null){
+            detailFragment = new DetailsFragment();
+        }
+        detailFragment.setId(selectedArticleID);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, detailFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }
