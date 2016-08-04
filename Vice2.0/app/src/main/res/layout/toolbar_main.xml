@@ -13,7 +13,7 @@
         >
         <android.support.v7.widget.Toolbar
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/toolbar_menu_image"
+            android:id="@+id/toolbar_xml"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="?attr/colorPrimary"
@@ -36,10 +36,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+
 
 </android.support.design.widget.CoordinatorLayout>

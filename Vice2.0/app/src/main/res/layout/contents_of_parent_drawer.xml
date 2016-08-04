@@ -5,6 +5,7 @@
     android:layout_height="60dp">
 
     <TextView
+        android:text="children of drawers"
         android:id="@+id/contentsname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
