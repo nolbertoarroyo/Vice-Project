@@ -1,5 +1,10 @@
 package com.test.vice20.Activities;
 
+import android.annotation.TargetApi;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
 import com.test.vice20.Models.ArticleNews;
+import com.test.vice20.NotificationJobService;
 import com.test.vice20.R;
 
 import retrofit2.Call;
@@ -34,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
     NewsServiceInterface newsServiceInterface;
     String favArticleId;
     DataBaseHelper helper;
+    private static final int JOB_INFO = 13;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +81,18 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
             }
         });
+
+        //schedule article updates evey 5 secs (for testing purposes)
+        JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
+                new ComponentName(getPackageName(),
+                        NotificationJobService.class.getName()))
+                .setPersisted(true)
+                .setPeriodic(5000)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+
     }
 
     @Override
