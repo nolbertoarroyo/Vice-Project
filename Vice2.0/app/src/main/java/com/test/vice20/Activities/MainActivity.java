@@ -1,14 +1,19 @@
 package com.test.vice20.Activities;
 
 import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        handleIntent(getIntent());
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -62,25 +69,23 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MainActivity.baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
-
-        newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
-            @Override
-            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
-                favoriteArticle= response.body().getData().getArticle();
-
-            }
-
-
-            @Override
-            public void onFailure(Call<ArticleNews> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(MainActivity.baseURL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
+//
+//        newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
+//            @Override
+//            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+//                favoriteArticle= response.body().getData().getArticle();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ArticleNews> call, Throwable t) {
+//                Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         //schedule article updates evey 5 secs (for testing purposes)
         JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
@@ -100,7 +105,16 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
-        return super.onCreateOptionsMenu(menu);
+        // Find searchManager and searchableInfo
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+
+        // Associate searchable info with the SearchView
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchableInfo);
+
+        // Return true to show menu, returning false will not show it.
+        return true;
     }
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
@@ -128,17 +142,13 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                         Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
                         Log.i("hey","hhh");
                         item.setIcon(android.R.drawable.btn_star_big_on);
-
-
                     }
-
 
                     @Override
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
                         Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-
 
                 return true;
             case R.id.search:
@@ -166,5 +176,24 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         favArticleId=selectedArticleID;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            ArticleListFragment listFragment = new ArticleListFragment();
+
+            listFragment.setQuery(query);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, listFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+    }
 
 }

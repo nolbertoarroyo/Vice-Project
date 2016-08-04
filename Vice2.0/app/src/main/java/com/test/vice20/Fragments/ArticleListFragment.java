@@ -35,7 +35,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
     private List<Item> results;
     private MyCustomAdapter customAdapter;
 
-    private String query = null;
+    private String query;
 
     private NewsServiceInterface newsServiceInterface;
     private ItemClickedInterface itemClickedInterface;
@@ -119,7 +119,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
 
                     @Override
                     public void onFailure(Call<News> call, Throwable t) {
-                        Toast.makeText(getActivity(), "API call failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "API call failed2", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -127,6 +127,10 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
         } else {
             Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void setQuery(String newQuery) {
+        this.query = newQuery;
     }
 
 }
