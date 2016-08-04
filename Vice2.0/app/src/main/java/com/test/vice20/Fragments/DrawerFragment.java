@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.app.ActionBarDrawerToggle;
 
 import com.test.vice20.Adapters.DrawerAdapter;
 import com.test.vice20.Models.OpenDrawer;
@@ -42,7 +41,7 @@ import java.util.List;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.drawer_fragment,container,false);
+        view = inflater.inflate(R.layout.drawerfragment_aka_parentdrawers,container,false);
         return view;
     }
     @Override

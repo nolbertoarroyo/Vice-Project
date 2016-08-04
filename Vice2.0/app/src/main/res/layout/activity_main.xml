@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start"
+    tools:openDrawer="st
+    art"
     tools:context="com.test.vice20.Activities.MainActivity">
 
     <include
@@ -21,7 +22,7 @@
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:layout="@layout/drawer_fragment"
-        tools:layout="@layout/drawer_fragment" />
+        app:layout="@layout/drawerfragment_aka_parentdrawers"
+        tools:layout="@layout/drawerfragment_aka_parentdrawers" />
 
 </android.support.v4.widget.DrawerLayout>

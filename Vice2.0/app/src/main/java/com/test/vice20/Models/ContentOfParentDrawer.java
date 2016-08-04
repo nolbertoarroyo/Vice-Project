@@ -1,6 +1,6 @@
 package com.test.vice20.Models;
 
-public class ContentOfParentDrawer extends OpenDrawer {
+public class ContentOfParentDrawer extends CheckBox {
     private String name;
 
     public ContentOfParentDrawer(String name) {

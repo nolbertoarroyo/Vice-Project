@@ -6,17 +6,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
 import com.test.vice20.Models.ContentOfParentDrawer;
-import com.test.vice20.Models.DrawerSeperator;
 import com.test.vice20.Models.OpenDrawer;
 import com.test.vice20.Models.ParentDrawer;
-import com.test.vice20.Models.Toggle;
+import com.test.vice20.Models.FavoritesDrawer;
 import com.test.vice20.R;
 
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import java.util.List;
 
 
 //custom adapter that does different things for multiple items:
-    //if toggle is clicked
-    // carries special VH depending on whether the person clicks a parent drawer (no icon)
-    //of sub item (icon)
+    //if checkboxchecked it tells checkedArray the status
+    // carries special view depending on which drawer is clicked
+
 
     //tells each view what to do dpending on the type of item it contains,
     //does this by determining 'if' item is an instance of a class
@@ -36,10 +36,10 @@ import java.util.List;
 public class DrawerAdapter extends RecyclerView.Adapter {
     private List<OpenDrawer> data;
     private LayoutInflater inflater;
-    private ArrayList<Boolean> isToggledArray = new ArrayList<>();
-    public DrawerAdapter(Context context, List<OpenDrawer> data, ArrayList<Boolean> isToggledArray) {
+    private ArrayList<Boolean> isCheckedArray = new ArrayList<>();
+    public DrawerAdapter(Context context, List<OpenDrawer> data, ArrayList<Boolean> isCheckedArray) {
         this.data = data;
-        this.isToggledArray = isToggledArray;
+        this.isCheckedArray = isCheckedArray;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -51,25 +51,20 @@ public class DrawerAdapter extends RecyclerView.Adapter {
 
 
                 if(viewType==0) {
-                    itemLayoutView = inflater.inflate(R.layout.parent_drawer_with_icon, parent, false);
-                    ParentDrawerViewHolder holder = new ParentDrawerViewHolder(itemLayoutView);
-                    return holder;
+                    itemLayoutView = inflater.inflate(R.layout.contents_of_category_drawer, parent, false);
+                    ContentsOfCategoryDrawer categoryDrawerViewHolder = new ContentsOfCategoryDrawer(itemLayoutView);
+                    return categoryDrawerViewHolder;
                 }
             if(viewType==1) {
-                itemLayoutView = inflater.inflate(R.layout.drawer_separator, parent, false);
-                SeparaterViewHolder separaterViewHolder = new SeparaterViewHolder(itemLayoutView);
-                return separaterViewHolder;
+                itemLayoutView = inflater.inflate(R.layout.fragment_favorites, parent, false);
+                FavoritesDrawer favoritesViewHolder = new FavoritesDrawer(itemLayoutView);
+                return favoritesViewHolder;
             }
 
-                if(viewType==2) {
-                    itemLayoutView = inflater.inflate(R.layout.contents_of_parent_drawer, parent, false);
-                    ContentsOfParentDrawerViewHolder contentsOfParentDrawerViewHolder = new ContentsOfParentDrawerViewHolder(itemLayoutView);
-                    return contentsOfParentDrawerViewHolder;
-                }
-                    if(viewType==3) {
-                itemLayoutView = inflater.inflate(R.layout.drawer_toggle_layout, parent, false);
-                ToggleViewHolder toggleViewHolder = new ToggleViewHolder(itemLayoutView);
-                return toggleViewHolder;
+                    if(viewType==2) {
+                itemLayoutView = inflater.inflate(R.layout.drawer_checkbox, parent, false);
+                CheckBox checkViewHolder = new CheckBox(itemLayoutView);
+                return checkViewHolder;
         }
 
         return null;
@@ -77,41 +72,47 @@ public class DrawerAdapter extends RecyclerView.Adapter {
 
   //tells drawer views what to do based on the contents of the drawer
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder recycleViewHolder, final int position) {
         final OpenDrawer item = data.get(position);
 
-        if (item instanceof ParentDrawer) {
-            ParentDrawerViewHolder viewHolder = (ParentDrawerViewHolder) holder;
-            viewHolder.name.setText(((ParentDrawer) item).getName());
-            viewHolder.imageView.setImageResource(((ParentDrawer) item).getIconNumber());
+        if (item instanceof ParentDrawer) { //parent categories drawer
+            ParentDrawer parentDrawerViewHolder = (ParentDrawer) parentDrawerViewHolder;
+            parentDrawerViewHolder.name.setText(((ParentDrawer) item).getName());
+            parentDrawerViewHolder.getIconNumber().setIconNumber(((ParentDrawer) item).getIconNumber());
+        }
+
+        if (item instanceof FavoritesDrawer) { //expanded categories drawer
+            FavoritesDrawer favoritesDrawerViewHolder = (FavoritesDrawer) favoritesDrawerViewHolder;
+            favoritesDrawerViewHolder.name.setText(((ParentDrawer) item).getName());
+            favoritesDrawerViewHolder.getIconNumber().setIconNumber(((ParentDrawer) item).getIconNumber());
         }
 
         if (item instanceof ContentOfParentDrawer) {
-            ContentsOfParentDrawerViewHolder viewHolder = (ContentsOfParentDrawerViewHolder) holder;
-            viewHolder.name.setText(((ContentOfParentDrawer) item).getName());
+            ContentOfParentDrawer contentOfParentDrawerViewHolder = (ContentOfParentDrawer) contentOfParentDrawerViewHolder;
+            contentOfParentDrawerViewHolder.name.setText(((ContentOfParentDrawer) item).getName());
         }
 
-        if (item instanceof Toggle)  {
-            final ToggleViewHolder viewHolder = (ToggleViewHolder) holder;
-            viewHolder.name.setText(((Toggle) item).getName());
+        if (item instanceof com.test.vice20.Models.CheckBox)  {
+            final com.test.vice20.Models.CheckBox checkBoxViewHolder = (com.test.vice20.Models.CheckBox) checkBoxViewHolder;
+            checkBoxViewHolder.name.setText(((com.test.vice20.Models.CheckBox) item).getName());
 
-            viewHolder.mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            checkBoxViewHolder.mswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onToggleChange(CompoundButton buttonView, boolean isToggled) {
-                    if (isToggled) {
-                        viewHolder.mswitch.setChecked(true);
-                        isToggledArray.set(position, true);
+                public void onCheckChange(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        checkBoxViewHolder.mswitch.setChecked(true);
+                        checkBoxViewHolder.set(position, true);
                     } else {
-                        viewHolder.mswitch.setChecked(false);
-                        isToggledArray.set(position, false);
+                        checkBoxViewHolder.mswitch.setChecked(false);
+                        isCheckedArray.set(position, false);
                     }
                 }
             });
 
-            if (!isToggledArray.get(position)) {
-                viewHolder.mswitch.setChecked(false);
+            if (!isCheckedArray.get(position)) {
+                checkBoxViewHolder.mswitch.isChecked(false);
             } else {
-                viewHolder.mswitch.setChecked(true);
+                checkBoxViewHolder.mswitch.setChecked(true);
             }
         }
     }
@@ -119,18 +120,16 @@ public class DrawerAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
 
-        if (data.get(position) instanceof ParentDrawer) {
+        if (data.get(position) instanceof ContentOfParentDrawer) {
             return 0;
         }
-        if (data.get(position) instanceof DrawerSeperator) {
+        if (data.get(position) instanceof FavoritesDrawer) {
             return 1;
         }
-        if (data.get(position) instanceof ContentOfParentDrawer) {
+        if (data.get(position) instanceof CheckBox) {
             return 2;
         }
-        if (data.get(position) instanceof Toggle) {
-            return 3;
-        }
+
         return -1;
     }
 
@@ -140,43 +139,44 @@ public class DrawerAdapter extends RecyclerView.Adapter {
     }
 
   // Array of booleans based on toggle positions
-    public ArrayList<Boolean> getIsToggledArray() {
-        return isToggledArray;
+    public ArrayList<Boolean> getIsCheckedArray() {
+        return isCheckedArray;
     }
 
 
-
+///sets view depending on which button is clicked in the Drawer Fragment
     class ParentDrawerViewHolder extends RecyclerView.ViewHolder {
         final TextView name;
         final ImageView imageView;
 
+        final Button categoryButton;
+        final Button favoritesButton;
+        final Button thirdButton;
+
         public ParentDrawerViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.picturecontentname);
-            imageView = (ImageView) itemView.findViewById(R.id.picturecontentimage);
+            categoryButton = (Button) itemView.findViewById(R.id.category_drawer);
+            favoritesButton = (Button) itemView.findViewById(R.id.favorite_drawer);
+        thirdButton = (Button) itemView.findViewById(R.id.tbd_third_drawer);
         }
     }
 
-    class SeparaterViewHolder extends RecyclerView.ViewHolder {
-        public SeparaterViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
 
-    class ContentsOfParentDrawerViewHolder extends RecyclerView.ViewHolder {
+///sets views depending on which button is clicked inside of the contentsofcategorydrawer which was expanded from the category drawer on the drawer fragment
+    class ContentsOfCategoryDrawer extends RecyclerView.ViewHolder {
         final TextView name;
 
-        public ContentsOfParentDrawerViewHolder(View itemView) {
+        public ContentsOfCategoryDrawer(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.contentsname);
+            name = (TextView) itemView.findViewById(R.id.categories_list);
         }
     }
 
-    class ToggleViewHolder extends RecyclerView.ViewHolder {
+    class CheckBoxViewHolder extends RecyclerView.ViewHolder {
         final TextView name;
         final Switch mswitch;
 
-        public ToggleViewHolder(View itemView) {
+        public CheckBoxViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.contentsname);
             mswitch = (Switch) itemView.findViewById(R.id.switchit);
