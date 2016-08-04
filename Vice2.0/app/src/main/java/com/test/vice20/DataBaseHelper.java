@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
+import com.test.vice20.Models.Article;
 import com.test.vice20.Models.Item;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String[] FAVORITES_COLUMNS = {DataEntryFavorites._ID,DataEntryFavorites.COL_ITEM_ID,DataEntryFavorites.COL_TITLE,DataEntryFavorites.COL_PREVIEW, DataEntryFavorites.COL_BODY,DataEntryFavorites.COL_AUTHOR,DataEntryFavorites.COL_PUBDATE,DataEntryFavorites.COL_DEFAULT_IMAGE};
 
     // method for inserting Articles properties into favorites table
-    public void insertRowFavorities(Item item){
+    public void insertRowFavorities(Article item){
 
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
