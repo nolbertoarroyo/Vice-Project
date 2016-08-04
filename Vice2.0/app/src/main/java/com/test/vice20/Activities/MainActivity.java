@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_xml);  //sterling added toolbar on wed night
         setSupportActionBar(toolbar);
 
         Retrofit retrofit = new Retrofit.Builder()
