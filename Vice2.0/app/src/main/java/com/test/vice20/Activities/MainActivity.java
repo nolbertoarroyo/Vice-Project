@@ -1,14 +1,20 @@
 package com.test.vice20.Activities;
 
 import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -42,57 +48,46 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
     DataBaseHelper helper;
     private static final int JOB_INFO = 13;
 
+    private static final String fragTag = "firstFragTag";
+    private static final String searchFragTag = "searchTag";
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         // create a new fragment
         ArticleListFragment fragment = new ArticleListFragment();
 
-        // add fragment to the container ( there is nothing there yet, that is why we add )
-        fragmentTransaction.add(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if(fragmentManager.findFragmentByTag(searchFragTag) == null) {
+
+            // add fragment to the container ( there is nothing there yet, that is why we add )
+            fragmentTransaction.add(R.id.fragment_container, fragment);
+            fragmentTransaction.addToBackStack(fragTag);
+            Log.d(fragTag, "we're in onCreate with first Frag");
+            fragmentTransaction.commit();
+        }
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_xml);  //sterling added toolbar on wed night
         setSupportActionBar(toolbar);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MainActivity.baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
-
-        newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
-            @Override
-            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
-                favoriteArticle= response.body().getData().getArticle();
-
-            }
-
-
-            @Override
-            public void onFailure(Call<ArticleNews> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //schedule article updates evey 5 secs (for testing purposes)
+        //schedule article updates evey 100 secs (for testing purposes)
         JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
                 new ComponentName(getPackageName(),
                         NotificationJobService.class.getName()))
                 .setPersisted(true)
-                .setPeriodic(5000)
+                .setPeriodic(100000)
                 .build();
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
 
+        //handling search intent
+        handleIntent(getIntent());
     }
 
     @Override
@@ -100,7 +95,16 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
-        return super.onCreateOptionsMenu(menu);
+        // Find searchManager and searchableInfo
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+
+        // Associate searchable info with the SearchView
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchableInfo);
+
+        // Return true to show menu, returning false will not show it.
+        return true;
     }
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
@@ -128,17 +132,13 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                         Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
                         Log.i("hey","hhh");
                         item.setIcon(android.R.drawable.btn_star_big_on);
-
-
                     }
-
 
                     @Override
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
                         Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-
 
                 return true;
             case R.id.search:
@@ -166,5 +166,27 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         favArticleId=selectedArticleID;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+
+            ArticleListFragment listFragment = new ArticleListFragment();
+
+            listFragment.setQuery(query);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, listFragment);
+            fragmentTransaction.addToBackStack(searchFragTag);
+            fragmentTransaction.commit();
+
+        }
+    }
 
 }
