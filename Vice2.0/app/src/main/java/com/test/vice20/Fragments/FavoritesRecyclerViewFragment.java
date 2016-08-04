@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Adapters.CustomRecyclerViewAdapter;
@@ -51,6 +52,9 @@ public class FavoritesRecyclerViewFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBaseHelper = DataBaseHelper.getInstance(getActivity());
+
+        //getData();
+        getTestData();
     }
 
     @Nullable
@@ -60,7 +64,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         rootView.setTag(TAG);
 
-        getData();
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
@@ -69,7 +72,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         rvAdapter = new CustomRecyclerViewAdapter(favorites);
         recyclerView.setAdapter(rvAdapter);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return rootView;
     }
 
     //get data depending on if query or default from VICE API
@@ -89,7 +92,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
             newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 newsServiceInterface.getArticle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))).enqueue(new Callback<ArticleNews>() {
@@ -100,7 +102,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
-
+                        Toast.makeText(getActivity(), "Fav API call failed", Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -114,10 +116,37 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                 temp.setPubDate(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PUBDATE)));
                 temp.setBody(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_BODY)));
                 temp.setId(Integer.toString(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))));
-                temp.setImage(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_DEFAULT_IMAGE)));
+                //temp.setImage(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_DEFAULT_IMAGE)));
                 favorites.add(temp);
             }
         }
+    }
+
+    public void getTestData() {
+        Article temp = new Article();
+        temp.setAuthor("someone");
+        temp.setTitle("some title");
+        temp.setPreview("some text");
+        temp.setPubDate("some date");
+        temp.setBody("some more text");
+        temp.setId("12345");
+        favorites.add(temp);
+        Article temp2 = new Article();
+        temp2.setAuthor("someone");
+        temp2.setTitle("some title2");
+        temp2.setPreview("some text2");
+        temp2.setPubDate("some date");
+        temp2.setBody("some more text");
+        temp2.setId("12345");
+        favorites.add(temp2);
+        Article temp3 = new Article();
+        temp3.setAuthor("someone");
+        temp3.setTitle("some title3");
+        temp3.setPreview("some text3");
+        temp3.setPubDate("some date");
+        temp3.setBody("some more text");
+        temp3.setId("12345");
+        favorites.add(temp3);
     }
 
 }

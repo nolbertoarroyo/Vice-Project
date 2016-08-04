@@ -24,7 +24,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
     private static final String TAG = "Adapter";
     private List<Article> data;
 
-    public static class SampleViewHolder extends RecyclerView.ViewHolder {
+    public class SampleViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
         private TextView titleTextView;
@@ -99,14 +99,14 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         ImageView imageView = holder.imageView;
 
         // put our dataItem string as text into the text view
-        titleTextView.setText(dataItem.getTitle());
-        categoryTextView.setText(dataItem.getCategory());
-        previewTextView.setText(dataItem.getPreview());
+        holder.titleTextView.setText(dataItem.getTitle());
+        holder.categoryTextView.setText(dataItem.getCategory());
+        holder.previewTextView.setText(dataItem.getPreview());
 
         // set the launcher icon as our image resource
         Context context = holder.imageView.getContext();
 
-        Picasso.with(context).load(dataItem.getImage()).into(imageView);
+//        Picasso.with(context).load(dataItem.getImage()).into(imageView);
     }
 
     @Override

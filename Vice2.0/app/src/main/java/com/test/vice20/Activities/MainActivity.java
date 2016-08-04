@@ -20,11 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Fragments.ArticleListFragment;
 import com.test.vice20.Fragments.DetailsFragment;
+import com.test.vice20.Fragments.FavoritesRecyclerViewFragment;
 import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
@@ -50,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     private static final String fragTag = "firstFragTag";
     private static final String searchFragTag = "searchTag";
+    private static final String favFragTag = "favTag";
+
+    //Testing button
+    private Button favButton;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -88,6 +95,22 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
         //handling search intent
         handleIntent(getIntent());
+
+        //testing favorite button
+        favButton = (Button) findViewById(R.id.favorite_test);
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.replace(R.id.fragment_container, fragment);
+                fragmentTransaction.addToBackStack(favFragTag);
+                fragmentTransaction.commit();
+            }
+        });
     }
 
     @Override
