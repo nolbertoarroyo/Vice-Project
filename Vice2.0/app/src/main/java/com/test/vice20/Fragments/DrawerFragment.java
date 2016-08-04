@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.app.ActionBarDrawerToggle;
 
-import com.test.vice20.Adapters.DrawerAdapter;
+//import com.test.vice20.Adapters.DrawerAdapter;
 import com.test.vice20.Models.OpenDrawer;
 import com.test.vice20.Models.Toggle;
 import com.test.vice20.R;
@@ -32,19 +32,21 @@ import java.util.List;
 
 
 
-    public class DrawerFragment extends Fragment {
+   public class DrawerFragment extends Fragment {
 
         private View view;
         private Toggle toggle;
         private RecyclerView recyclerView;
         private DrawerLayout drawerLayout;
-        private DrawerAdapter drawerAdapter;
+       // private DrawerAdapter drawerAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.drawer_fragment,container,false);
         return view;
     }
+
+    /*
     @Override
     public void onPause() {
 
@@ -124,7 +126,9 @@ import java.util.List;
         recyclerView.setAdapter(drawerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
-    }}
+    }
+*/
+}
 
 
 

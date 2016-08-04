@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             fragmentTransaction.commit();
         }
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_xml);  //sterling added toolbar on wed night
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);  //sterling added toolbar on wed night
         setSupportActionBar(toolbar);
 
         //schedule article updates evey 100 secs (for testing purposes)
