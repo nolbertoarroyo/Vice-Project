@@ -129,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 public boolean onNavigationItemSelected(MenuItem item) {
     int id = item.getItemId();
         //how we handle the drawer clicks
-        if (id == R.id.tech) { //if click on tech
+        if (id == R.id.tech) { //if click on techgit log
+
         String query = "tech";
 //whatever you type it passes in , say list fragment query "tech"
 
