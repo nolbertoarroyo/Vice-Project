@@ -168,10 +168,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             fragmentTransaction.commit();
 
         } else if (id == R.id.favorites) {
-            FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+           startFavFragment();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -215,28 +212,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                     item.setIcon(android.R.drawable.btn_star_big_off);
                     Toast.makeText(MainActivity.this, "Article removed from favorites", Toast.LENGTH_SHORT).show();
                 } else {
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(MainActivity.baseURL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                    newsServiceInterface = retrofit.create(NewsServiceInterface.class);
+                    helper = DataBaseHelper.getInstance(MainActivity.this);
+                    helper.insertRowFavorities(favoriteArticle);
+                    Toast.makeText(MainActivity.this, "Article added to favorites", Toast.LENGTH_SHORT).show();
+                    item.setIcon(android.R.drawable.btn_star_big_on);
 
-                    newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
-                        @Override
-                        public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
-                            //getting article from api and inserting to database favorites table
-                            favoriteArticle = response.body().getData().getArticle();
-                            helper = DataBaseHelper.getInstance(MainActivity.this);
-                            helper.insertRowFavorities(favoriteArticle);
-                            Toast.makeText(MainActivity.this, "Article added to favorites", Toast.LENGTH_SHORT).show();
-                            item.setIcon(android.R.drawable.btn_star_big_on);
-                        }
-
-                        @Override
-                        public void onFailure(Call<ArticleNews> call, Throwable t) {
-                            Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 }
 
                 return true;
@@ -285,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             detailFragment.setIsFavOn(true);
             Log.i("STAR", "item existes");
         }
+        getFavoritesRetroFite();
     }
 
 
@@ -406,5 +387,25 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
     }
+    public void getFavoritesRetroFite(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
+        newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
+            @Override
+            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+                //getting article from api and inserting to database favorites table
+                favoriteArticle = response.body().getData().getArticle();
+            }
+
+            @Override
+            public void onFailure(Call<ArticleNews> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 }
