@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         startArticleListFragment();
 
         setToolBar();
+
         setJobScheduler();
 
         //Drawer layout
@@ -389,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+        getSupportActionBar().setLogo(R.drawable.vice_2);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
