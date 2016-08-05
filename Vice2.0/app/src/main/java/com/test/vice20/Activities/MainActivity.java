@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.model.ShareLinkContent;
@@ -50,85 +52,40 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import com.facebook.FacebookSdk;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
 
     public static String baseURL = "http://vice.com/";
     private DetailsFragment detailFragment;
-    Article favoriteArticle;
+    private Article favoriteArticle;
     NewsServiceInterface newsServiceInterface;
-    String favArticleId;
+    private String favArticleId;
     DataBaseHelper helper;
     private static final int JOB_INFO = 13;
-
     private static final String fragTag = "firstFragTag";
     private static final String searchFragTag = "searchTag";
     private static final String favFragTag = "favTag";
-
-    //Testing button
-    private Button favButton;
     CallbackManager callbackManager;
     Menu menu;
     ShareDialog shareDialog;
-    LoginButton loginButton;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //initializing facebook sdk
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-        setUpFacebook();
+        setFacebook();
+        //starting home fragment
+        startArticleListFragment();
+        setToolBar();
+        setJobScheduler();
 
 
 
-        // create a new fragment
-        ArticleListFragment fragment = new ArticleListFragment();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        if(fragmentManager.findFragmentByTag(searchFragTag) == null) {
-
-            // add fragment to the container ( there is nothing there yet, that is why we add )
-            fragmentTransaction.add(R.id.fragment_container, fragment);
-            fragmentTransaction.addToBackStack(fragTag);
-            Log.d(fragTag, "we're in onCreate with first Frag");
-            fragmentTransaction.commit();
-        }
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);  //sterling added toolbar on wed night
-        setSupportActionBar(toolbar);
-
-        //schedule article updates evey 100 secs (for testing purposes)
-        JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
-                new ComponentName(getPackageName(),
-                        NotificationJobService.class.getName()))
-                .setPersisted(true)
-                .setPeriodic(100000)
-                .build();
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(jobInfo);
-
-        //handling search intent
-        handleIntent(getIntent());
-
-        //testing favorite button
-        favButton = (Button) findViewById(R.id.favorite_test);
-        favButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                fragmentTransaction.replace(R.id.fragment_container, fragment);
-                fragmentTransaction.addToBackStack(favFragTag);
-                fragmentTransaction.commit();
-            }
-        });
     }
 
     @Override
@@ -160,10 +117,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
                 return true;
             case R.id.action_favorite:
+                //checking if current article is already in database, if so, deleting it
                if(helper.exists(favArticleId)){
                    helper.deleteFavoritesItem(favArticleId);
                    item.setIcon(android.R.drawable.btn_star_big_off);
-                   Toast.makeText(MainActivity.this,"deleted"+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+                   Toast.makeText(MainActivity.this, "Article removed from favorites",Toast.LENGTH_SHORT).show();
                }else{
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(MainActivity.baseURL)
@@ -174,10 +132,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 newsServiceInterface.getArticle(favArticleId).enqueue(new Callback<ArticleNews>() {
                     @Override
                     public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+                        //getting article from api and inserting to database favorites table
                         favoriteArticle= response.body().getData().getArticle();
                         helper = DataBaseHelper.getInstance(MainActivity.this);
                         helper.insertRowFavorities(favoriteArticle);
-                        Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Article added to favorites",Toast.LENGTH_SHORT).show();
                         item.setIcon(android.R.drawable.btn_star_big_on);
                     }
 
@@ -190,6 +149,21 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 return true;
             case R.id.search:
 
+                return true;
+            case R.id.action_facebook:
+                //checking if someone is logged in to facebook, if so, loging out on click and setting new text
+                Profile profile = Profile.getCurrentProfile();
+                if (profile != null) {
+                    LoginManager.getInstance().logOut();
+                    item.setTitle(R.string.com_facebook_loginview_log_in_button_long);
+                }else {
+                    LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+                    item.setTitle(R.string.action_fb_logout);
+                }
+
+                return true;
+            case R.id.action_favorites:
+                startFavFragment();
                 return true;
 
             default:
@@ -245,52 +219,97 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
         }
     }
-    public void setUpFacebook(){
-        callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
-        // Other app specific specialization
-
-        // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-            }
-        });
-
-
-
-    }
+    //method prepares shareDialog to share to facebook
     public void shareToFacebook(){
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                    .setContentTitle("Hello Facebook")
-                    .setContentDescription(
-                            "The 'Hello Facebook' sample  showcases simple Facebook integration")
-                    .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                    .setContentTitle(favoriteArticle.getTitle())
+                    .setContentDescription(favoriteArticle.getPreview())
+                    .setContentUrl(Uri.parse(favoriteArticle.getUrl()))
                     .build();
 
             shareDialog.show(linkContent);
         }
 
     }
+    //Method sets up facebook login call
+    public void setFacebook(){
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+    public void startFavFragment(){
+        FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(favFragTag);
+        fragmentTransaction.commit();
+    }
+
+
+    public void startArticleListFragment(){
+        // create a new fragment
+        ArticleListFragment fragment = new ArticleListFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if(fragmentManager.findFragmentByTag(searchFragTag) == null) {
+
+            // add fragment to the container
+            fragmentTransaction.add(R.id.fragment_container, fragment);
+            fragmentTransaction.addToBackStack(fragTag);
+            Log.d(fragTag, "we're in onCreate with first Frag");
+            fragmentTransaction.commit();
+        }
+    }
+    public void setToolBar(){
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void setJobScheduler(){
+        //schedule article updates evey 100 secs (for testing purposes)
+        JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
+                new ComponentName(getPackageName(),
+                        NotificationJobService.class.getName()))
+                .setPersisted(true)
+                .setPeriodic(100000)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+
+        //handling search intent
+        handleIntent(getIntent());
     }
 
 }

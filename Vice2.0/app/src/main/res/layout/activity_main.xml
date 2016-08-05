@@ -16,20 +16,6 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp" />
-
-    <Button
-        android:id="@+id/favorite_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favorites"
-        />
 
     <FrameLayout
         android:id="@+id/fragment_container"
