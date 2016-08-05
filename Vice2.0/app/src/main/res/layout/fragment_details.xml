@@ -10,7 +10,8 @@
         android:id="@+id/details_frag_image"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/blacksquare"/>
 
     <LinearLayout
         android:layout_width="match_parent"
