@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         if (helper.exists(selectedArticleID)) {
             menu.findItem(R.id.action_favorite).setVisible(true);
             menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
+            detailFragment.setIsFavOn(true);
             Log.i("STAR", "item existes");
         }
         }
