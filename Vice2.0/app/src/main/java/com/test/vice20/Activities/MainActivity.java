@@ -8,6 +8,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Fragments.ArticleListFragment;
 import com.test.vice20.Fragments.DetailsFragment;
@@ -40,6 +48,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.facebook.FacebookSdk;
 
 public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
 
@@ -57,12 +66,21 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     //Testing button
     private Button favButton;
+    CallbackManager callbackManager;
+    Menu menu;
+    ShareDialog shareDialog;
+    LoginButton loginButton;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //initializing facebook sdk
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+        setUpFacebook();
+
+
 
         // create a new fragment
         ArticleListFragment fragment = new ArticleListFragment();
@@ -115,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
@@ -137,9 +156,15 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 return true;
 
             case R.id.action_share:
+                shareToFacebook();
 
                 return true;
             case R.id.action_favorite:
+               if(helper.exists(favArticleId)){
+                   helper.deleteFavoritesItem(favArticleId);
+                   item.setIcon(android.R.drawable.btn_star_big_off);
+                   Toast.makeText(MainActivity.this,"deleted"+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+               }else{
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(MainActivity.baseURL)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -153,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                         helper = DataBaseHelper.getInstance(MainActivity.this);
                         helper.insertRowFavorities(favoriteArticle);
                         Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
-                        Log.i("hey","hhh");
                         item.setIcon(android.R.drawable.btn_star_big_on);
                     }
 
@@ -161,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
                         Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });}
 
                 return true;
             case R.id.search:
@@ -177,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @Override
     public void onItemClicked(String selectedArticleID) {
+        helper= DataBaseHelper.getInstance(MainActivity.this);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         if(detailFragment == null){
             detailFragment = new DetailsFragment();
@@ -187,7 +213,15 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         favArticleId=selectedArticleID;
-    }
+        if (helper.exists(selectedArticleID)) {
+            menu.findItem(R.id.action_favorite).setVisible(true);
+            menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
+            detailFragment.setIsFavOn(true);
+            Log.i("STAR", "item existes");
+        }
+        }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -208,7 +242,55 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             fragmentTransaction.addToBackStack(searchFragTag);
             fragmentTransaction.commit();
 
+
         }
+    }
+    public void setUpFacebook(){
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email");
+        // Other app specific specialization
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+
+
+
+    }
+    public void shareToFacebook(){
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentTitle("Hello Facebook")
+                    .setContentDescription(
+                            "The 'Hello Facebook' sample  showcases simple Facebook integration")
+                    .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                    .build();
+
+            shareDialog.show(linkContent);
+        }
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 }
