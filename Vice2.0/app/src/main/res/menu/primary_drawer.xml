@@ -34,7 +34,12 @@
             <item
                 android:id="@+id/favorites"
                 android:icon="@drawable/favorites"
-                android:title="You Favorite Articles" />
+                android:title="Your Favorite Articles" />
+
+            <item
+                android:id="@+id/home"
+                android:icon="@drawable/home3"
+                android:title="Home" />
 
         </menu>
     </item>
