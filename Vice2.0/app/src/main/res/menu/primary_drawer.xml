@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/tech"
+            android:icon="@drawable/technology"
+            android:title="Technology"
+
+            />
+        <item
+            android:id="@+id/travel"
+            android:icon="@drawable/travel"
+            android:title="Travel" />
+        <item
+            android:id="@+id/photo"
+            android:icon="@drawable/photo"
+            android:title="Photo" />
+
+        <item
+            android:id="@+id/music"
+            android:icon="@drawable/music"
+            android:title="Music" />
+
+        <item
+            android:id="@+id/festivals"
+            android:icon="@drawable/festival"
+            android:title="Festivals" />
+    </group>
+
+    <item android:title="Your Saved Preferences">
+        <menu>
+            <item
+                android:id="@+id/favorites"
+                android:icon="@drawable/favorites"
+                android:title="You Favorite Articles" />
+
+        </menu>
+    </item>
+
+</menu>

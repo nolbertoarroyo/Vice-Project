@@ -4,8 +4,14 @@
     <string name="action_settings">Settings</string>
     <string name="action_favorite">Favorite</string>
     <string name="action_search">Search</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string name="action_facebook">Facebook Login</string>
     <string name="action_fb_logout">Facebook Logout</string>
     <string name="facebook_app_id">108817079563461</string>
     <string name="action_favorites">Favorites</string>
+
 </resources>
+

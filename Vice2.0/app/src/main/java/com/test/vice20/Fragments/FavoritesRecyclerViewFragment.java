@@ -110,7 +110,6 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                     public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
                         favorites.add(response.body().getData().getArticle());
                         rvAdapter.notifyDataSetChanged();
-
                     }
 
                     @Override

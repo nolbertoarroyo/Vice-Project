@@ -51,6 +51,6 @@ dependencies {
     compile "com.android.support:support-v4:24.1.1"
     compile "com.android.support:support-v4:24.1.1"
 
-    //facebook
+    // Favebook API
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

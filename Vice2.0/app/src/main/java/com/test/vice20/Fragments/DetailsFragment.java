@@ -3,11 +3,9 @@ package com.test.vice20.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,9 +15,9 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.DataBaseHelper;
+import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
 import com.test.vice20.Models.ArticleNews;
-import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.R;
 
 import retrofit2.Call;
@@ -37,7 +35,6 @@ public class DetailsFragment extends Fragment {
     private String id;
     private ImageView articleImage;
     private TextView titleText, authorText, contentText, categoryText, pubDateText;
-    DataBaseHelper helper;
     Boolean fav = false;
 
     @Override
@@ -61,29 +58,30 @@ public class DetailsFragment extends Fragment {
         titleText.setText(currentItem.getTitle());
         authorText.setText(currentItem.getAuthor());
         categoryText.setText(currentItem.getCategory());
-        contentText.setText(currentItem.getBody());
         pubDateText.setText(currentItem.getPubDate());
+
+        String htmlTextStr = Html.fromHtml(currentItem.getBody()).toString();
+        contentText.setText(htmlTextStr);
         // uses picasso for image
         Picasso.with(getContext())
                 .load(currentItem.getImage())
                 .into(articleImage);
-
-
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         //setting visibility for menu items
-        if (!fav){
+        if (!fav) {
             menu.findItem(R.id.action_favorite).setVisible(true);
             menu.findItem(R.id.action_share).setVisible(true);
-        }else{
+        } else {
 
             menu.findItem(R.id.action_favorite).setVisible(true);
             menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
             menu.findItem(R.id.action_share).setVisible(true);
-        super.onPrepareOptionsMenu(menu);
-    }}
+            super.onPrepareOptionsMenu(menu);
+        }
+    }
 
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
     public void getItem(String id) {
@@ -124,8 +122,9 @@ public class DetailsFragment extends Fragment {
         pubDateText = (TextView) v.findViewById(R.id.details_frag_pub_date);
 
     }
-    public void setIsFavOn(Boolean fav){
-        this.fav= fav;
+
+    public void setIsFavOn(Boolean fav) {
+        this.fav = fav;
     }
 
 

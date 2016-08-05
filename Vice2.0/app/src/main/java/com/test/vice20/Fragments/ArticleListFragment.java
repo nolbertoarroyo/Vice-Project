@@ -12,11 +12,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.test.vice20.Activities.MainActivity;
-import com.test.vice20.Interfaces.ItemClickedInterface;
-import com.test.vice20.Models.Data;
-import com.test.vice20.Models.Item;
 import com.test.vice20.Adapters.MyCustomAdapter;
+import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
+import com.test.vice20.Models.Item;
 import com.test.vice20.Models.News;
 
 import java.util.List;
@@ -97,6 +96,7 @@ public class ArticleListFragment extends android.support.v4.app.ListFragment {
 
             //if no query, populate with today's latest news
             if (isDefault) {
+                //this is where she brings in latest and greatest
                 newsServiceInterface.getTodayList(0).enqueue(new Callback<News>() {
                     @Override
                     public void onResponse(Call<News> call, Response<News> response) {
