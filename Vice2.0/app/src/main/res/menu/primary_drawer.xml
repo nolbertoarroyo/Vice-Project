@@ -24,9 +24,9 @@
             android:title="Music" />
 
         <item
-            android:id="@+id/Festival"
+            android:id="@+id/festivals"
             android:icon="@drawable/festival"
-            android:title="Fashion" />
+            android:title="Festivals" />
     </group>
 
     <item android:title="Your Saved Preferences">

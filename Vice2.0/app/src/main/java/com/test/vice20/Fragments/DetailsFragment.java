@@ -38,6 +38,7 @@ public class DetailsFragment extends Fragment {
     private ImageView articleImage;
     private TextView titleText, authorText, contentText, categoryText, pubDateText;
     DataBaseHelper helper;
+    Boolean fav = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,14 +71,19 @@ public class DetailsFragment extends Fragment {
 
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.main_menu, menu);
-//        menu.findItem(R.id.action_favorite).setVisible(true);
-//        menu.findItem(R.id.action_share).setVisible(true);
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        //setting visibility for menu items
+        if (!fav){
+            menu.findItem(R.id.action_favorite).setVisible(true);
+            menu.findItem(R.id.action_share).setVisible(true);
+        }else{
 
+            menu.findItem(R.id.action_favorite).setVisible(true);
+            menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
+            menu.findItem(R.id.action_share).setVisible(true);
+        super.onPrepareOptionsMenu(menu);
+    }}
 
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
     public void getItem(String id) {
@@ -118,5 +124,9 @@ public class DetailsFragment extends Fragment {
         pubDateText = (TextView) v.findViewById(R.id.details_frag_pub_date);
 
     }
+    public void setIsFavOn(Boolean fav){
+        this.fav= fav;
+    }
+
 
 }

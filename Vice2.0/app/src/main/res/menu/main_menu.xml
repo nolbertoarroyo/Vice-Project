@@ -23,6 +23,16 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom"/>
 
+    <item android:id="@+id/action_facebook"
+        android:title="@string/action_facebook"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_favorites"
+        android:title="@string/action_favorites"
+        app:showAsAction="never"/>
+
+
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never"/>

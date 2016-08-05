@@ -9,17 +9,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Adapters.CustomRecyclerViewAdapter;
 import com.test.vice20.DataBaseHelper;
+import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
 import com.test.vice20.Models.ArticleNews;
-import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
 import java.util.ArrayList;
@@ -47,10 +49,24 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
     private NewsServiceInterface newsServiceInterface;
 
+    private ItemClickedInterface itemClickedInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            itemClickedInterface = (ItemClickedInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement interface  ");
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBaseHelper = DataBaseHelper.getInstance(getActivity());
+
+        getData();
     }
 
     @Nullable
@@ -60,16 +76,14 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         rootView.setTag(TAG);
 
-        getData();
-
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rvLayoutManager);
 
-        rvAdapter = new CustomRecyclerViewAdapter(favorites);
+        rvAdapter = new CustomRecyclerViewAdapter((ItemClickedInterface) getActivity(), favorites);
         recyclerView.setAdapter(rvAdapter);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return rootView;
     }
 
     //get data depending on if query or default from VICE API
@@ -89,21 +103,23 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
             newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
                 newsServiceInterface.getArticle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))).enqueue(new Callback<ArticleNews>() {
                     @Override
                     public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
                         favorites.add(response.body().getData().getArticle());
+                        rvAdapter.notifyDataSetChanged();
+
                     }
 
                     @Override
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
-
+                        Toast.makeText(getActivity(), "Fav API call failed", Toast.LENGTH_SHORT);
                     }
                 });
             }
+            Log.d("checking value: ", String.valueOf(favorites));
         } else {
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
@@ -114,10 +130,9 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                 temp.setPubDate(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PUBDATE)));
                 temp.setBody(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_BODY)));
                 temp.setId(Integer.toString(cursor.getInt(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_ITEM_ID))));
-                temp.setImage(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_DEFAULT_IMAGE)));
+                //temp.setImage(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_DEFAULT_IMAGE)));
                 favorites.add(temp);
             }
         }
     }
-
 }
