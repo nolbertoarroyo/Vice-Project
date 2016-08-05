@@ -9,12 +9,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Fragments.ArticleListFragment;
 import com.test.vice20.Fragments.DetailsFragment;
+import com.test.vice20.Fragments.FavoritesRecyclerViewFragment;
 import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
@@ -38,7 +41,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
+public class MainActivity extends AppCompatActivity implements ItemClickedInterface,NavigationView.OnNavigationItemSelectedListener {
+    NavigationView navigationView = null;
+    Toolbar toolbar = null;
+
+
 
     public static String baseURL = "http://vice.com/";
     private DetailsFragment detailFragment;
@@ -53,9 +60,18 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+
+
+        super.onCreate(savedInstanceState);
+
+
+
 
         // create a new fragment
         ArticleListFragment fragment = new ArticleListFragment();
@@ -72,8 +88,15 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             fragmentTransaction.commit();
         }
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);  //sterling added toolbar on wed night
-        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         //schedule article updates evey 100 secs (for testing purposes)
         JobInfo jobInfo = new JobInfo.Builder(JOB_INFO,
@@ -89,6 +112,97 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         //handling search intent
         handleIntent(getIntent());
     }
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+public boolean onNavigationItemSelected(MenuItem item) {
+    int id = item.getItemId();
+        //how we handle the drawer clicks
+        if (id == R.id.tech) { //if click on tech
+        String query = "tech";
+//whatever you type it passes in , say list fragment query "tech"
+
+        ArticleListFragment articleListFragment = new ArticleListFragment();
+        articleListFragment.setQuery(query);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, articleListFragment);
+        fragmentTransaction.addToBackStack(searchFragTag);
+        fragmentTransaction.commit();
+
+        }
+    else if (id ==R.id.music){
+            String query = "music";
+            ArticleListFragment articleListFragment = new ArticleListFragment();
+            articleListFragment.setQuery(query);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, articleListFragment);
+            fragmentTransaction.addToBackStack(searchFragTag);
+            fragmentTransaction.commit();
+
+        }
+
+        else if (id ==R.id.travel){
+            String query = "travel";
+//whatever you type it passes in , say list fragment query "tech"
+
+            ArticleListFragment articleListFragment = new ArticleListFragment();
+            articleListFragment.setQuery(query);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, articleListFragment);
+            fragmentTransaction.addToBackStack(searchFragTag);
+            fragmentTransaction.commit();
+
+        }
+
+        else if (id ==R.id.favorites){
+            FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, fragment);
+            fragmentTransaction.commit();
+
+        }
+        else if (id ==R.id.photo){
+            String query = "photo";
+            ArticleListFragment articleListFragment = new ArticleListFragment();
+            articleListFragment.setQuery(query);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, articleListFragment);
+            fragmentTransaction.addToBackStack(searchFragTag);
+            fragmentTransaction.commit();
+
+        }
+
+        else if (id ==R.id.music){
+            String query = "music";
+            ArticleListFragment articleListFragment = new ArticleListFragment();
+            articleListFragment.setQuery(query);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, articleListFragment);
+            fragmentTransaction.addToBackStack(searchFragTag);
+            fragmentTransaction.commit();
+
+        }
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+}
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -174,11 +288,12 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-
+//whatever you type it passes in , say list fragment query "tech"
 
             ArticleListFragment listFragment = new ArticleListFragment();
 
             listFragment.setQuery(query);
+            //ListFragment.setQuery(tech)
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
