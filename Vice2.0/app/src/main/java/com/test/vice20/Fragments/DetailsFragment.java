@@ -71,7 +71,6 @@ public class DetailsFragment extends Fragment {
 
     }
 
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         //setting visibility for menu items

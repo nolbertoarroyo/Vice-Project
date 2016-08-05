@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -60,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     private static final String fragTag = "firstFragTag";
     private static final String searchFragTag = "searchTag";
+    private static final String favFragTag = "favTag";
+
+    //Testing button
+    private Button favButton;
     CallbackManager callbackManager;
     Menu menu;
     ShareDialog shareDialog;
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         //initializing facebook sdk
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+        setUpFacebook();
 
 
 
@@ -106,6 +113,22 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
         //handling search intent
         handleIntent(getIntent());
+
+        //testing favorite button
+        favButton = (Button) findViewById(R.id.favorite_test);
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FavoritesRecyclerViewFragment fragment = new FavoritesRecyclerViewFragment();
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.replace(R.id.fragment_container, fragment);
+                fragmentTransaction.addToBackStack(favFragTag);
+                fragmentTransaction.commit();
+            }
+        });
     }
 
     @Override
@@ -208,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-
 
             ArticleListFragment listFragment = new ArticleListFragment();
 
