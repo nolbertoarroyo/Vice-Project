@@ -170,6 +170,11 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         } else if (id == R.id.favorites) {
            startFavFragment();
         }
+
+    else if (id == R.id.home) {
+            startArticleListFragment();
+
+    }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
