@@ -22,31 +22,42 @@
             android:id="@+id/details_frag_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"/>
 
         <TextView
             android:id="@+id/details_frag_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"/>
 
 
         <TextView
             android:id="@+id/details_frag_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"/>
 
         <TextView
             android:id="@+id/details_frag_pub_date"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"/>
 
         <TextView
             android:id="@+id/details_frag_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@color/colorDivider"/>
 
 
     </LinearLayout>
