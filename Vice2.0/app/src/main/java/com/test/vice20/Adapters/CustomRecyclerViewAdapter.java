@@ -2,7 +2,6 @@ package com.test.vice20.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Models.Article;
-import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
 import java.util.List;
@@ -19,10 +18,17 @@ import java.util.List;
 /**
  * Created by kitty on 8/2/16.
  */
-public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.SampleViewHolder>{
+public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.SampleViewHolder> {
 
     private static final String TAG = "Adapter";
     private List<Article> data;
+
+    private static ItemClickedInterface favItemClicked;
+
+    public CustomRecyclerViewAdapter(ItemClickedInterface onFavItemClicked, List<Article> inComingData) {
+        this.data = inComingData;
+        this.favItemClicked = onFavItemClicked;
+    }
 
     public class SampleViewHolder extends RecyclerView.ViewHolder {
 
@@ -47,17 +53,13 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    // ToDo: need to update to swap to details fragment
-                    Log.d(TAG, "Clicked on item: " + getLayoutPosition());
+                    String articleClicked = data.get(getLayoutPosition()).getId();
+                    favItemClicked.onItemClicked(articleClicked);
                 }
             });
         }
     }
 
-    public CustomRecyclerViewAdapter(List<Article> inComingData){
-        this.data = inComingData;
-    }
 
     @Override
     public SampleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -99,18 +101,19 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
         ImageView imageView = holder.imageView;
 
         // put our dataItem string as text into the text view
-        holder.titleTextView.setText(dataItem.getTitle());
-        holder.categoryTextView.setText(dataItem.getCategory());
-        holder.previewTextView.setText(dataItem.getPreview());
+        titleTextView.setText(dataItem.getTitle());
+        categoryTextView.setText(dataItem.getCategory());
+        previewTextView.setText(dataItem.getPreview());
 
         // set the launcher icon as our image resource
         Context context = holder.imageView.getContext();
 
-//        Picasso.with(context).load(dataItem.getImage()).into(imageView);
+        Picasso.with(context).load(dataItem.getImage()).into(imageView);
     }
 
     @Override
     public int getItemCount() {
         return data.size();
     }
+
 }

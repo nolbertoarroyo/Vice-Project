@@ -70,13 +70,13 @@ public class DetailsFragment extends Fragment {
 
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.main_menu, menu);
-//        menu.findItem(R.id.action_favorite).setVisible(true);
-//        menu.findItem(R.id.action_share).setVisible(true);
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.action_favorite).setVisible(true);
+        menu.findItem(R.id.action_share).setVisible(true);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
 
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,10 @@ import android.widget.Toast;
 import com.test.vice20.Activities.MainActivity;
 import com.test.vice20.Adapters.CustomRecyclerViewAdapter;
 import com.test.vice20.DataBaseHelper;
+import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
 import com.test.vice20.Models.ArticleNews;
-import com.test.vice20.Models.Item;
 import com.test.vice20.R;
 
 import java.util.ArrayList;
@@ -48,13 +49,24 @@ public class FavoritesRecyclerViewFragment extends Fragment {
 
     private NewsServiceInterface newsServiceInterface;
 
+    private ItemClickedInterface itemClickedInterface;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            itemClickedInterface = (ItemClickedInterface) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement interface  ");
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBaseHelper = DataBaseHelper.getInstance(getActivity());
 
-        //getData();
-        getTestData();
+        getData();
     }
 
     @Nullable
@@ -64,12 +76,11 @@ public class FavoritesRecyclerViewFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         rootView.setTag(TAG);
 
-
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         rvLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rvLayoutManager);
 
-        rvAdapter = new CustomRecyclerViewAdapter(favorites);
+        rvAdapter = new CustomRecyclerViewAdapter((ItemClickedInterface) getActivity(), favorites);
         recyclerView.setAdapter(rvAdapter);
 
         return rootView;
@@ -98,6 +109,8 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
                         favorites.add(response.body().getData().getArticle());
+                        rvAdapter.notifyDataSetChanged();
+
                     }
 
                     @Override
@@ -106,6 +119,7 @@ public class FavoritesRecyclerViewFragment extends Fragment {
                     }
                 });
             }
+            Log.d("checking value: ", String.valueOf(favorites));
         } else {
             for (int i = 0; i<cursor.getCount(); i++) {
                 cursor.moveToPosition(i);
@@ -121,32 +135,4 @@ public class FavoritesRecyclerViewFragment extends Fragment {
             }
         }
     }
-
-    public void getTestData() {
-        Article temp = new Article();
-        temp.setAuthor("someone");
-        temp.setTitle("some title");
-        temp.setPreview("some text");
-        temp.setPubDate("some date");
-        temp.setBody("some more text");
-        temp.setId("12345");
-        favorites.add(temp);
-        Article temp2 = new Article();
-        temp2.setAuthor("someone");
-        temp2.setTitle("some title2");
-        temp2.setPreview("some text2");
-        temp2.setPubDate("some date");
-        temp2.setBody("some more text");
-        temp2.setId("12345");
-        favorites.add(temp2);
-        Article temp3 = new Article();
-        temp3.setAuthor("someone");
-        temp3.setTitle("some title3");
-        temp3.setPreview("some text3");
-        temp3.setPubDate("some date");
-        temp3.setBody("some more text");
-        temp3.setId("12345");
-        favorites.add(temp3);
-    }
-
 }

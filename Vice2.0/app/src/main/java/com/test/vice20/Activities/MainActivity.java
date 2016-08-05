@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-
             ArticleListFragment listFragment = new ArticleListFragment();
 
             listFragment.setQuery(query);
