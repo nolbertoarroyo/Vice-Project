@@ -73,6 +73,8 @@ public class DetailsFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        //setting visibility for menu items
+
         menu.findItem(R.id.action_favorite).setVisible(true);
         menu.findItem(R.id.action_share).setVisible(true);
         super.onPrepareOptionsMenu(menu);

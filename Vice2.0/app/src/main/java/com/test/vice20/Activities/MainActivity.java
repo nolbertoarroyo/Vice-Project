@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         fragmentTransaction.commit();
         favArticleId=selectedArticleID;
         if (helper.exists(selectedArticleID)) {
+            menu.findItem(R.id.action_favorite).setVisible(true);
             menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
             Log.i("STAR", "item existes");
         }
