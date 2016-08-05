@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                if(helper.exists(favArticleId)){
                    helper.deleteFavoritesItem(favArticleId);
                    item.setIcon(android.R.drawable.btn_star_big_off);
-                   Toast.makeText(MainActivity.this,"deleted"+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+                   Toast.makeText(MainActivity.this, "Article removed from favorites",Toast.LENGTH_SHORT).show();
                }else{
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(MainActivity.baseURL)
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                         favoriteArticle= response.body().getData().getArticle();
                         helper = DataBaseHelper.getInstance(MainActivity.this);
                         helper.insertRowFavorities(favoriteArticle);
-                        Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Article added to favorites",Toast.LENGTH_SHORT).show();
                         item.setIcon(android.R.drawable.btn_star_big_on);
                     }
 
