@@ -1,5 +1,9 @@
 package com.test.vice20.Fragments;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,16 +34,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nolbertoarroyo on 8/1/16.
  */
 public class DetailsFragment extends Fragment {
-    NewsServiceInterface newsServiceInterface;
-    Article currentItem;
+    private NewsServiceInterface newsServiceInterface;
+    private Article currentItem;
     private String id;
     private ImageView articleImage;
     private TextView titleText, authorText, contentText, categoryText, pubDateText;
-    Boolean fav = false;
+    private Boolean fav = false;
+    private DataBaseHelper dataBaseHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dataBaseHelper = DataBaseHelper.getInstance(getActivity());
         setHasOptionsMenu(true);
     }
 
@@ -62,10 +68,15 @@ public class DetailsFragment extends Fragment {
 
         String htmlTextStr = Html.fromHtml(currentItem.getBody()).toString();
         contentText.setText(htmlTextStr);
-        // uses picasso for image
-        Picasso.with(getContext())
-                .load(currentItem.getImage())
-                .into(articleImage);
+
+        // uses picasso for image when there's internet
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            Picasso.with(getContext())
+                    .load(currentItem.getImage())
+                    .into(articleImage);
+        } else {}
     }
 
     @Override
@@ -86,24 +97,40 @@ public class DetailsFragment extends Fragment {
     //getItem takes article id and runs a callback to retrieve article from api, runs populateViews() to set article properties to views
     public void getItem(String id) {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MainActivity.baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        newsServiceInterface = retrofit.create(NewsServiceInterface.class);
+        //check internet connection
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
 
-        newsServiceInterface.getArticle(id).enqueue(new Callback<ArticleNews>() {
-            @Override
-            public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
-                currentItem = response.body().getData().getArticle();
-                populateViews();
-            }
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(MainActivity.baseURL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            newsServiceInterface = retrofit.create(NewsServiceInterface.class);
 
-            @Override
-            public void onFailure(Call<ArticleNews> call, Throwable t) {
-                Toast.makeText(getActivity(), "Article API call failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+            newsServiceInterface.getArticle(id).enqueue(new Callback<ArticleNews>() {
+                @Override
+                public void onResponse(Call<ArticleNews> call, Response<ArticleNews> response) {
+                    currentItem = response.body().getData().getArticle();
+                    populateViews();
+                }
+
+                @Override
+                public void onFailure(Call<ArticleNews> call, Throwable t) {
+                    Toast.makeText(getActivity(), "Article API call failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Article tempArticle = new Article();
+            Cursor cursor = dataBaseHelper.getArticleById(id);
+            cursor.moveToFirst();
+            tempArticle.setTitle(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_TITLE)));
+            tempArticle.setAuthor(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_AUTHOR)));
+            tempArticle.setBody(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_BODY)));
+            tempArticle.setPubDate(cursor.getString(cursor.getColumnIndex(DataBaseHelper.DataEntryFavorites.COL_PUBDATE)));
+            currentItem = tempArticle;
+            populateViews();
+        }
     }
 
     // setter method to receive article position from listFragment
