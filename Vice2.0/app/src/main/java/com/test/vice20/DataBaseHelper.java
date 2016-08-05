@@ -131,19 +131,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
-    //getting article by author
-    public Cursor getArticleByAuthor(String author){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(DataEntryFavorites.TABLE_NAME,
-                FAVORITES_COLUMNS,
-                DataEntryFavorites.COL_AUTHOR + " = ?",
-                new String[] {author},
-                null,
-                null,
-                null);
 
-        return cursor;
-    }
     public Boolean exists(String id) {
         boolean exists = false;
         SQLiteDatabase db = this.getReadableDatabase();
