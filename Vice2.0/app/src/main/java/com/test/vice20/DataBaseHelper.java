@@ -70,7 +70,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             DataEntryFavorites.COL_PUBDATE + " TEXT," +
             DataEntryFavorites.COL_BODY + " TEXT," +
             DataEntryFavorites.COL_AUTHOR + " TEXT," +
-            DataEntryFavorites.COL_ITEM_ID + " INTEGER," +
+            DataEntryFavorites.COL_ITEM_ID + " TEXT," +
             DataEntryFavorites.COL_DEFAULT_IMAGE + " INTEGER)";
 
     private static final String SQL_DELETE_ENTRIES_ARTICLES = "DROP TABLE IF EXISTS " +
@@ -109,20 +109,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
     //deleting article from favorites table by id
-    public int deleteFavoritesItem(int id) {
+    public int deleteFavoritesItem(String id) {
         SQLiteDatabase db = getWritableDatabase();
         int deleteNum = db.delete(DataEntryFavorites.TABLE_NAME,
-                DataEntryFavorites.COL_ID + " = ?",
+                DataEntryFavorites.COL_ITEM_ID + " = ?",
                 new String[]{String.valueOf(id)});
         db.close();
         return deleteNum;
     }
     //get article by id
-    public Cursor getArticleById(int id) {
+    public Cursor getArticleById(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(DataEntryFavorites.TABLE_NAME, // a. table
                 FAVORITES_COLUMNS, // b. column names
-                DataEntryFavorites.COL_ID + " = ?", // c. selections
+                DataEntryFavorites.COL_ITEM_ID + " = ?", // c. selections
                 new String[]{String.valueOf(id)}, // d. selections args
                 null, // e. group by
                 null, // f. having
@@ -143,6 +143,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 null);
 
         return cursor;
+    }
+    public Boolean exists(String id) {
+        boolean exists = false;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(DataEntryFavorites.TABLE_NAME, // a. table
+                FAVORITES_COLUMNS, // b. column names
+                DataEntryFavorites.COL_ITEM_ID + " = ?", // c. selections
+                new String[]{String.valueOf(id)}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+        if (cursor.getCount()>=1){
+            exists=true;
+            cursor.close();
+        }
+
+        return exists;
     }
 
 

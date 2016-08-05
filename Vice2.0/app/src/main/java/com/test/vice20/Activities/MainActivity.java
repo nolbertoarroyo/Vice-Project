@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Fragments.ArticleListFragment;
 import com.test.vice20.Fragments.DetailsFragment;
+import com.test.vice20.Fragments.FavoritesRecyclerViewFragment;
 import com.test.vice20.Interfaces.ItemClickedInterface;
 import com.test.vice20.Interfaces.NewsServiceInterface;
 import com.test.vice20.Models.Article;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     private static final String fragTag = "firstFragTag";
     private static final String searchFragTag = "searchTag";
+    Menu menu;
+    MenuItem item;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
@@ -114,9 +118,19 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 return true;
 
             case R.id.action_share:
+                FavoritesRecyclerViewFragment favfrag= new FavoritesRecyclerViewFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container,favfrag);
+                fragmentTransaction.commit();
 
                 return true;
             case R.id.action_favorite:
+               if(helper.exists(favArticleId)){
+                   helper.deleteFavoritesItem(favArticleId);
+                   item.setIcon(android.R.drawable.btn_star_big_off);
+                   Toast.makeText(MainActivity.this,"deleted"+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
+               }else{
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(MainActivity.baseURL)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -130,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                         helper = DataBaseHelper.getInstance(MainActivity.this);
                         helper.insertRowFavorities(favoriteArticle);
                         Toast.makeText(MainActivity.this,""+helper.getFavoritesList().getCount(),Toast.LENGTH_SHORT).show();
-                        Log.i("hey","hhh");
                         item.setIcon(android.R.drawable.btn_star_big_on);
                     }
 
@@ -138,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                     public void onFailure(Call<ArticleNews> call, Throwable t) {
                         Toast.makeText(MainActivity.this, "Article API call failed", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });}
 
                 return true;
             case R.id.search:
@@ -154,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     @Override
     public void onItemClicked(String selectedArticleID) {
+        helper= DataBaseHelper.getInstance(MainActivity.this);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         if(detailFragment == null){
             detailFragment = new DetailsFragment();
@@ -164,7 +179,13 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         favArticleId=selectedArticleID;
-    }
+        if (helper.exists(selectedArticleID)) {
+            menu.findItem(R.id.action_favorite).setIcon(android.R.drawable.btn_star_big_on);
+            Log.i("STAR", "item existes");
+        }
+        }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -185,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
             fragmentTransaction.replace(R.id.fragment_container, listFragment);
             fragmentTransaction.addToBackStack(searchFragTag);
             fragmentTransaction.commit();
+
 
         }
     }
