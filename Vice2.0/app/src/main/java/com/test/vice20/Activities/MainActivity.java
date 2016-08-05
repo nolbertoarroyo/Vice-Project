@@ -8,6 +8,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +23,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.test.vice20.DataBaseHelper;
 import com.test.vice20.Fragments.ArticleListFragment;
 import com.test.vice20.Fragments.DetailsFragment;
@@ -38,6 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.facebook.FacebookSdk;
 
 public class MainActivity extends AppCompatActivity implements ItemClickedInterface {
 
@@ -51,14 +60,20 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
     private static final String fragTag = "firstFragTag";
     private static final String searchFragTag = "searchTag";
+    CallbackManager callbackManager;
     Menu menu;
-    MenuItem item;
+    ShareDialog shareDialog;
+    LoginButton loginButton;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //initializing facebook sdk
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+
 
         // create a new fragment
         ArticleListFragment fragment = new ArticleListFragment();
@@ -118,11 +133,7 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
                 return true;
 
             case R.id.action_share:
-                FavoritesRecyclerViewFragment favfrag= new FavoritesRecyclerViewFragment();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container,favfrag);
-                fragmentTransaction.commit();
+                shareToFacebook();
 
                 return true;
             case R.id.action_favorite:
@@ -211,6 +222,53 @@ public class MainActivity extends AppCompatActivity implements ItemClickedInterf
 
 
         }
+    }
+    public void setUpFacebook(){
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email");
+        // Other app specific specialization
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+
+
+
+    }
+    public void shareToFacebook(){
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentTitle("Hello Facebook")
+                    .setContentDescription(
+                            "The 'Hello Facebook' sample  showcases simple Facebook integration")
+                    .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                    .build();
+
+            shareDialog.show(linkContent);
+        }
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 }
